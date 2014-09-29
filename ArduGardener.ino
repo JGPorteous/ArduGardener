@@ -1,46 +1,84 @@
-#include <SPI.h>
-#include <RF24_config.h>
-#include <RF24.h>
-#include <nRF24L01.h>
-#include <printf.h>
-#include "Node.h"
+/*
+Copyright (C) 2014 Justin Porteous <justin@porteous.co.za>
 
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 2 as published by the Free Software Foundation.
+
+Credits due to ManiacBug - http://maniacbug.wordpress.com/
+
+Configuration before uploading:
+	1. Set variable thisNode, option of NodeTypes
+	2. Setup sensors
+
+*/
+
+#include <SPI.h>
+#include "RF24.h"
+#include "nRF24L01.h"
+#include "printf.h"
+#include "Node.h"
+#include "Sensor.h"
+//#include "stdio.h"
 //Node declaration
 Node me;
 
-enum SensorTypes { SENSOR_AirTemprature = 1, SENSOR_SoilTemperature, SENSOR_DirectTemperature, SENSOR_Humidity };
-enum NodeTypes { NODE_Server = 0, NODE_1, NODE_2, NODE_3, NODE_4, NODE_5, NODE_6};
-enum PinTypes { AnalogPin0 = A0, AnalogPin1 = A1, AnalogPin2 = A2, AnalogPin3 = A3, AnalogPin4 = A4, AnalogPin5 = A5, AnalogPin6 = A6, AnalogPin7 = A7,
-	DigitalPin1 = 1, DigitalPin2, DigitalPin3, DigitalPin4, DigitalPin5, DigitalPin6, DigitalPin7, DigitalPin8, DigitalPin9, DigitalPin10, DigitalPin11, DigitalPin12, DigitalPin13, DigitalPin14 };
+
 
 //Define Node Type before uploading to device
-const int thisNode = NODE_Server;
+const int thisNode = Node::NODE_2;
 
 
 void setup()
 {
+	//Setup Serial interface
 	Serial.begin(57600);
+	printf_begin();
+	printf("printf test................................................");
+
+
+	//This will configure the node
+	Serial.print("thisNode: ");
+	Serial.println(thisNode);
 	me = Node(thisNode);
 
-	//Setup your sensors here
-	me.AddSensor(2, SENSOR_Humidity, true, true);
-	me.AddSensor(3, SENSOR_AirTemprature, true, true);
+	Serial.println("Setting up sensors");
+	//Setup your sensors here 
+	me.AddSensor(2, Sensor::SENSOR_Humidity, true, true);
+	me.AddSensor(3, Sensor::SENSOR_AirTemprature, true, true);
 
+	Serial.println("done setting up sensors");
 
+	if (me.IsServer())
+		Serial.println("Node setup as a server!");
+	else
+		Serial.println("Node setup as transmitter!");
 }
 
 void loop()
 {
 	//There are two types of nodes, servers which collect data
-	// and transmitters which send data (and receive instructions)
-	if (thisNode == NODE_Server)
+	// and transmitters which send data (and optionally receive instructions)
+	if (thisNode == Node::NODE_Server)
 		ServerLoop();
 	else
 		TransmitterLoop();
 }
 
 void ServerLoop()
-{}
+{
+	me.ReadRadio();
+
+}
 
 void TransmitterLoop()
-{}
+{
+	if (me.TimeToSendData())
+		me.SendData(); 
+	
+	if (me.TimeToSendHearBeat())
+		me.SendHeartBeat();
+
+	
+
+}

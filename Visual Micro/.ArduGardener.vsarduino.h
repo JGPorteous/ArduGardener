@@ -49,6 +49,7 @@ void TransmitterLoop();
 #include "C:\Users\justin\Documents\Arduino\ArduGardener\ArduGardener.ino"
 #include "C:\Users\justin\Documents\Arduino\ArduGardener\Node.cpp"
 #include "C:\Users\justin\Documents\Arduino\ArduGardener\Node.h"
-#include "C:\Users\justin\Documents\Arduino\ArduGardener\Sensors.cpp"
-#include "C:\Users\justin\Documents\Arduino\ArduGardener\Sensors.h"
+#include "C:\Users\justin\Documents\Arduino\ArduGardener\Sensor.cpp"
+#include "C:\Users\justin\Documents\Arduino\ArduGardener\Sensor.h"
+#include "C:\Users\justin\Documents\Arduino\ArduGardener\printf.h"
 #endif

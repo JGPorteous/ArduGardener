@@ -1,4 +1,4 @@
 ArduGardener
 ============
 
-Automated Gardening System based on Arduino
+Wireless Automated Gardening System based on Arduino
